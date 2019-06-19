@@ -1,0 +1,29 @@
+# Build results
+build/
+assets/streamingassets/*
+Library/
+Temp/
+obj/
+Logs/
+.vs/
+
+# csproj files
+Assembly-CSharp-Editor.csproj
+Assembly-CSharp-firstpass.csproj
+Assembly-CSharp.csproj
+
+# Game (Replay File)
+*.replay
+
+# Build Version
+assets/resources/buildversion.*
+
+# JarSigner
+!Tools/**/bin
+
+# Crashlytics
+**/crashlytics-build.properties.meta
+**/crashlytics-build.properties
+
+#UnoShader
+!**/UNOShader/Bin
