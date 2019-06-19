@@ -9,6 +9,7 @@ using System.Diagnostics;
 using UnityEngine;
 using SVector3 = SharpNav.Geometry.Vector3;
 using Debug = UnityEngine.Debug;
+using Vector3 = UnityEngine.Vector3;
 
 public class testGame : MonoBehaviour
 {
@@ -39,12 +40,19 @@ public class testGame : MonoBehaviour
 
     private NavMeshGenerationSettings settings = NavMeshGenerationSettings.Default;
 
+
+    // 길찾기 시뮬레이터
+    int CurrentNode = 0;
+    Vector3 TargetPosition;
+
     // Start is called before the first frame update
     void Start()
     {
         level = new ObjModel(@"ExportedObj;SampleScene_7.obj");
         GenerateNavMesh();
 
+        TargetPosition = ExportNavMeshToObj.ToUnityVector(smoothPath[CurrentNode]);
+        transform.position = TargetPosition;
     }
 
     private void GenerateNavMesh()
@@ -341,9 +349,22 @@ public class testGame : MonoBehaviour
         dest.Z = v1.Z + v2.Z * s;
     }
 
+
+
     // Update is called once per frame
     void Update()
     {
-        
+        if(transform.position != TargetPosition)
+        {
+            transform.position = Vector3.Lerp(transform.position, TargetPosition, Time.deltaTime * 50.0f);
+        }
+        else
+        {
+            if (CurrentNode<smoothPath.Count-1)
+            {
+                ++CurrentNode;
+                TargetPosition = ExportNavMeshToObj.ToUnityVector(smoothPath[CurrentNode]);
+            }
+        }
     }
 }
