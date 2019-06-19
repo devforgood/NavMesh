@@ -48,7 +48,11 @@ public class testGame : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        level = new ObjModel(@"ExportedObj;SampleScene_7.obj");
+        level = new ObjModel(@"ExportedObj;GameDA_3096.obj");
+
+        settings.AgentRadius = 0.2f;
+        settings.AgentHeight = 1.0f;
+
         GenerateNavMesh();
 
         TargetPosition = ExportNavMeshToObj.ToUnityVector(smoothPath[CurrentNode]);
@@ -194,6 +198,16 @@ public class testGame : MonoBehaviour
         buildData = new NavMeshBuilder(polyMesh, polyMeshDetail, new SharpNav.Pathfinding.OffMeshConnection[0], settings);
 
         tiledNavMesh = new TiledNavMesh(buildData);
+
+        for (int i = 0; i < tiledNavMesh.Tiles.Count; ++i)
+        {
+            for (int j = 0; j < tiledNavMesh.Tiles[i].Verts.Length; ++j)
+            {
+                if (j < tiledNavMesh.Tiles[i].Verts.Length - 1)
+                    Debug.DrawLine(ExportNavMeshToObj.ToUnityVector(tiledNavMesh.Tiles[i].Verts[j]), ExportNavMeshToObj.ToUnityVector(tiledNavMesh.Tiles[i].Verts[j + 1]), Color.blue, 99);
+            }
+        }
+
         navMeshQuery = new NavMeshQuery(tiledNavMesh, 2048);
 
         //Find random start and end points on the poly mesh
