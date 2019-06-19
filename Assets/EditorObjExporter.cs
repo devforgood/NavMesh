@@ -51,7 +51,7 @@ public class EditorObjExporter : ScriptableObject
 
             //This is sort of ugly - inverting x-component since we're in
             //a different coordinate system than "everyone" is "used to".
-            sb.Append(string.Format("v {0} {1} {2}\n", -wv.x, wv.y, wv.z));
+            sb.Append(string.Format("v {0} {1} {2}\n", wv.x, wv.y, wv.z));
         }
         sb.Append("\n");
 
@@ -59,7 +59,7 @@ public class EditorObjExporter : ScriptableObject
         {
             Vector3 wv = mf.transform.TransformDirection(lv);
 
-            sb.Append(string.Format("vn {0} {1} {2}\n", -wv.x, wv.y, wv.z));
+            sb.Append(string.Format("vn {0} {1} {2}\n", wv.x, wv.y, wv.z));
         }
         sb.Append("\n");
 
