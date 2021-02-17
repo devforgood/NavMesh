@@ -48,9 +48,9 @@ public class testGame : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        level = new ObjModel(@"ExportedObj;GameDA_3096.obj");
+        level = new ObjModel(@"ExportedObj;TestNavMesh_5.obj");
 
-        settings.AgentRadius = 0.2f;
+        settings.AgentRadius = 0.5f;
         settings.AgentHeight = 1.0f;
 
         GenerateNavMesh();
