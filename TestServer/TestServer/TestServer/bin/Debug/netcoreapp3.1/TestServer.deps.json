@@ -1,0 +1,66 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v3.1",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v3.1": {
+      "TestServer/1.0.0": {
+        "dependencies": {
+          "SharpNav": "1.0.0.1",
+          "YamlDotNet": "3.8.0.0"
+        },
+        "runtime": {
+          "TestServer.dll": {}
+        }
+      },
+      "SharpNav/1.0.0.1": {
+        "runtime": {
+          "SharpNav.dll": {
+            "assemblyVersion": "1.0.0.1",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "YamlDotNet/3.8.0.0": {
+        "runtime": {
+          "YamlDotNet.dll": {
+            "assemblyVersion": "3.8.0.0",
+            "fileVersion": "3.8.0.0"
+          }
+        }
+      },
+      "Newtonsoft.Json/8.0.0.0": {
+        "runtime": {
+          "Newtonsoft.Json.dll": {
+            "assemblyVersion": "8.0.0.0",
+            "fileVersion": "8.0.3.19514"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "TestServer/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "SharpNav/1.0.0.1": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "YamlDotNet/3.8.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Newtonsoft.Json/8.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
