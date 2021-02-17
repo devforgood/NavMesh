@@ -7,6 +7,8 @@ namespace TestServer
         static void Main(string[] args)
         {
             Console.WriteLine("Hello World!");
+            var t = new TestPath();
+            t.Start();
         }
     }
 }

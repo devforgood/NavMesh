@@ -44,7 +44,7 @@ namespace TestServer
         int CurrentNode = 0;
         Vector3 TargetPosition;
 
-        void Start()
+        public void Start()
         {
             level = new ObjModel(@"ExportedObj;GameDA_3096.obj");
 
