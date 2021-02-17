@@ -14,6 +14,7 @@ using SharpNav.Crowds;
 
 public class testGame : MonoBehaviour
 {
+    public GameObject [] mob;
     //Generate poly mesh
     private Heightfield heightfield;
     private CompactHeightfield compactHeightfield;
@@ -451,17 +452,28 @@ public class testGame : MonoBehaviour
 
         if (crowd != null)
         {
+            //Agent[] agents = new Agent[crowd.GetAgentCount()];
             for (int i = 0; i < crowd.GetAgentCount(); ++i)
             {
 
                 lastPosition[i] = crowd.GetAgent(i).Position;
+                //agents[i] = crowd.GetAgent(i);
             }
 
+            //crowd.UpdateTopologyOptimization(agents, crowd.GetAgentCount(), Time.deltaTime);
             crowd.Update(Time.deltaTime);
 
             for (int i = 0; i < crowd.GetAgentCount(); ++i)
             {
-                Debug.DrawLine(ExportNavMeshToObj.ToUnityVector(lastPosition[i]), ExportNavMeshToObj.ToUnityVector(crowd.GetAgent(i).Position), Color.green, 1);
+                try
+                {
+                    //Debug.DrawLine(ExportNavMeshToObj.ToUnityVector(lastPosition[i]), ExportNavMeshToObj.ToUnityVector(crowd.GetAgent(i).Position), Color.green, 1);
+                    mob[i].transform.position = ExportNavMeshToObj.ToUnityVector(crowd.GetAgent(i).Position);
+                }
+                catch
+                {
+
+                }
             }
         }
 
