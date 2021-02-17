@@ -10,6 +10,7 @@ using UnityEngine;
 using SVector3 = SharpNav.Geometry.Vector3;
 using Debug = UnityEngine.Debug;
 using Vector3 = UnityEngine.Vector3;
+using SharpNav.Crowds;
 
 public class testGame : MonoBehaviour
 {
@@ -30,6 +31,22 @@ public class testGame : MonoBehaviour
     private NavPoint endPt;
     private Path path;
     private List<SharpNav.Geometry.Vector3> smoothPath;
+
+    //A crowd is made up of multiple units, each with their own path
+    private Crowd crowd;
+    private const int MAX_AGENTS = 128;
+    private const int AGENT_MAX_TRAIL = 64;
+    private int numIterations = 50;
+    private int numActiveAgents = 100;
+    private AgentTrail[] trails = new AgentTrail[MAX_AGENTS];
+    private SVector3 [] lastPosition = new SVector3[MAX_AGENTS];
+
+    private struct AgentTrail
+    {
+        public SVector3[] Trail;
+        public int HTrail;
+    }
+
 
     private bool hasGenerated;
     private bool interceptExceptions;
@@ -169,7 +186,7 @@ public class testGame : MonoBehaviour
                 GeneratePathfinding();
 
                 //Pathfinding with multiple units
-                //GenerateCrowd();
+                GenerateCrowd();
             }
             catch (Exception e)
             {
@@ -363,7 +380,55 @@ public class testGame : MonoBehaviour
         dest.Z = v1.Z + v2.Z * s;
     }
 
+    private void GenerateCrowd()
+    {
+        if (!hasGenerated || navMeshQuery == null)
+            return;
 
+        System.Random rand = new System.Random();
+        crowd = new Crowd(MAX_AGENTS, 0.6f, ref tiledNavMesh);
+
+        SVector3 c = new SVector3(10, 0, 0);
+        SVector3 e = new SVector3(5, 5, 5);
+
+        AgentParams ap = new AgentParams();
+        ap.Radius = 0.6f;
+        ap.Height = 2.0f;
+        ap.MaxAcceleration = 8.0f;
+        ap.MaxSpeed = 3.5f;
+        ap.CollisionQueryRange = ap.Radius * 12.0f;
+        ap.PathOptimizationRange = ap.Radius * 30.0f;
+        ap.UpdateFlags = new UpdateFlags();
+
+        //initialize starting positions for each active agent
+        for (int i = 0; i < numActiveAgents; i++)
+        {
+            //Get the polygon that the starting point is in
+            NavPoint startPt;
+            navMeshQuery.FindNearestPoly(ref c, ref e, out startPt);
+
+            //Pick a new random point that is within a certain radius of the current point
+            NavPoint newPt;
+            navMeshQuery.FindRandomPointAroundCircle(ref startPt, 1000, out newPt);
+
+            c = newPt.Position;
+
+            //Save this random point as the starting position
+            trails[i].Trail = new SVector3[AGENT_MAX_TRAIL];
+            trails[i].Trail[0] = newPt.Position;
+            trails[i].HTrail = 0;
+
+            //add this agent to the crowd
+            int idx = crowd.AddAgent(newPt.Position, ap);
+
+            //Give this agent a target point
+            NavPoint targetPt;
+            navMeshQuery.FindRandomPointAroundCircle(ref newPt, 1000, out targetPt);
+
+            crowd.GetAgent(idx).RequestMoveTarget(targetPt.Polygon, targetPt.Position);
+            trails[i].Trail[AGENT_MAX_TRAIL - 1] = targetPt.Position;
+        }
+    }
 
     // Update is called once per frame
     void Update()
@@ -378,6 +443,22 @@ public class testGame : MonoBehaviour
             {
                 ++CurrentNode;
                 TargetPosition = ExportNavMeshToObj.ToUnityVector(smoothPath[CurrentNode]);
+            }
+        }
+
+        if(crowd != null)
+        {
+            for (int i = 0; i < crowd.GetAgentCount(); ++i)
+            {
+
+                lastPosition[i] = crowd.GetAgent(i).Position;
+            }
+
+            crowd.Update(Time.deltaTime);
+
+            for(int i=0;i< crowd.GetAgentCount();++i)
+            {
+                Debug.DrawLine(ExportNavMeshToObj.ToUnityVector(lastPosition[i]), ExportNavMeshToObj.ToUnityVector(crowd.GetAgent(i).Position), Color.green, 1);
             }
         }
     }
