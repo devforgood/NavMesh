@@ -421,9 +421,12 @@ public class testGame : MonoBehaviour
             //add this agent to the crowd
             int idx = crowd.AddAgent(newPt.Position, ap);
 
+
+            var targetPt = navMeshQuery.FindNearestPoly(new SVector3() { X = 0, Y = 0, Z = 0 }, new SVector3 { X = 1, Y = 1, Z = 1 });
+
             //Give this agent a target point
-            NavPoint targetPt;
-            navMeshQuery.FindRandomPointAroundCircle(ref newPt, 1000, out targetPt);
+            //NavPoint targetPt;
+            //navMeshQuery.FindRandomPointAroundCircle(ref newPt, 1000, out targetPt);
 
             crowd.GetAgent(idx).RequestMoveTarget(targetPt.Polygon, targetPt.Position);
             trails[i].Trail[AGENT_MAX_TRAIL - 1] = targetPt.Position;
@@ -433,20 +436,20 @@ public class testGame : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(transform.position != TargetPosition)
+        if (transform.position != TargetPosition)
         {
             transform.position = Vector3.Lerp(transform.position, TargetPosition, Time.deltaTime * 50.0f);
         }
         else
         {
-            if (CurrentNode<smoothPath.Count-1)
+            if (CurrentNode < smoothPath.Count - 1)
             {
                 ++CurrentNode;
                 TargetPosition = ExportNavMeshToObj.ToUnityVector(smoothPath[CurrentNode]);
             }
         }
 
-        if(crowd != null)
+        if (crowd != null)
         {
             for (int i = 0; i < crowd.GetAgentCount(); ++i)
             {
@@ -456,10 +459,39 @@ public class testGame : MonoBehaviour
 
             crowd.Update(Time.deltaTime);
 
-            for(int i=0;i< crowd.GetAgentCount();++i)
+            for (int i = 0; i < crowd.GetAgentCount(); ++i)
             {
                 Debug.DrawLine(ExportNavMeshToObj.ToUnityVector(lastPosition[i]), ExportNavMeshToObj.ToUnityVector(crowd.GetAgent(i).Position), Color.green, 1);
             }
+        }
+
+        if (Application.platform == RuntimePlatform.WindowsEditor)
+        {   // 현재 플랫폼이 Window 에디터인지
+            if (Input.GetMouseButtonDown(0))
+            {
+                Vector3 p = Input.mousePosition;
+
+                Ray cast = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+
+                // Mouse의 포지션을 Ray cast 로 변환
+
+
+
+                UnityEngine.RaycastHit hit;
+                if (Physics.Raycast(cast, out hit))
+                {
+                    Debug.Log($"hit x {hit.point.x}, y {hit.point.y}, z {hit.point.z}");
+
+                    var targetPt = navMeshQuery.FindNearestPoly(ExportNavMeshToObj.ToSharpVector(hit.point), new SVector3 { X = 1, Y = 1, Z = 1 });
+                    for (int i = 0; i < crowd.GetAgentCount(); ++i)
+                    {
+                        crowd.GetAgent(i).RequestMoveTarget(targetPt.Polygon, targetPt.Position);
+                    }
+                    crowd.UpdateMoveRequest();
+
+                }// RayCast
+            }// Mouse Click
         }
     }
 }

@@ -35,7 +35,7 @@ public class ExportNavMeshToObj : MonoBehaviour
     }
 
     // converts unity vector3 to sharpnav vector3
-    static SharpNav.Geometry.Vector3 ToSharpVector(Vector3 vector)
+    public static SharpNav.Geometry.Vector3 ToSharpVector(Vector3 vector)
     {
         return new SharpNav.Geometry.Vector3(vector.x, vector.y, vector.z);
     }
