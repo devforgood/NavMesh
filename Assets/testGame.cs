@@ -494,10 +494,15 @@ public class testGame : MonoBehaviour
                 if (Physics.Raycast(cast, out hit))
                 {
                     Debug.Log($"hit x {hit.point.x}, y {hit.point.y}, z {hit.point.z}");
+                    var newPt = navMeshQuery.FindNearestPoly(ExportNavMeshToObj.ToSharpVector(hit.point), new SVector3 { X = 10, Y = 10, Z = 10 });
 
-                    var targetPt = navMeshQuery.FindNearestPoly(ExportNavMeshToObj.ToSharpVector(hit.point), new SVector3 { X = 1, Y = 1, Z = 1 });
                     for (int i = 0; i < crowd.GetAgentCount(); ++i)
                     {
+                        NavPoint targetPt;
+                        navMeshQuery.FindRandomPointAroundCircle(ref newPt, 3, out targetPt);
+
+                        Debug.Log($"agent{i} : x {targetPt.Position.X}, y {targetPt.Position.Y}, z {targetPt.Position.Z}");
+
                         crowd.GetAgent(i).RequestMoveTarget(targetPt.Polygon, targetPt.Position);
                     }
                     crowd.UpdateMoveRequest();
